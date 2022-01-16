@@ -1,24 +1,25 @@
-package models;
+package com.example.IPRWC.Backend.models;
 
 import javax.persistence.*;
 
 
 @Entity
-//@Table(name = "products")
+@Table(name = "products")
 public class Product {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @SequenceGenerator(name="pk_sequence",sequenceName="messagesounds_id_seq", allocationSize=1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public long id;
-//    @Column(name = "price")
+    @Column(name = "price")
     public int price;
-//    @Column(name = "description")
+    @Column(name = "description")
     public String description;
-//    @Column(name = "size")
+    @Column(name = "size")
     public String size;
-//    @Column(name = "imageURL")
+    @Column(name = "image_url")
     public String imageURL;
-//    @Column(name = "name")
+    @Column(name = "product_name")
     public String productName;
 
     protected  Product(){}

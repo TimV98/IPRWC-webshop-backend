@@ -1,10 +1,10 @@
 package com.example.IPRWC.Backend.controller;
 
-import models.Product;
+import com.example.IPRWC.Backend.models.Product;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import models.ProductRepository;
+import com.example.IPRWC.Backend.models.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -19,16 +19,22 @@ public class Productcontroller {
     ProductRepository productRepository;
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        try {
-            List<Product> products = new ArrayList<Product>();
-            productRepository.findAll().forEach(products::add);
+    public List<Product> getAllProducts() {
+        return (List<Product>) productRepository.findAll();
+    }
 
-            return new ResponseEntity<>(products, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR) {
-            };
-        }
+    @PostMapping("/products/add")
+    public Product saveProduct(@RequestBody Product product){
+        return productRepository.save(product);
+    }
+//
+//    @PutMapping("/products/{id}")
+//    public Product putProduct(@RequestBody Product product, @PathVariable Long id){
+//        productRepository.findById(id);
+//    }
 
+    @DeleteMapping("/products/{id}")
+    public void deleteProduct(@PathVariable Long id){
+        productRepository.deleteById(id);
     }
 }
