@@ -1,8 +1,6 @@
 package com.example.IPRWC.Backend.controllers;
 
 import com.example.IPRWC.Backend.entities.Product;
-import com.example.IPRWC.Backend.payload.response.MessageResponse;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import com.example.IPRWC.Backend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,7 @@ import java.util.Optional;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api/products")
-public class Productcontroller {
+public class ProductController {
 
     @Autowired
     ProductRepository productRepository;
