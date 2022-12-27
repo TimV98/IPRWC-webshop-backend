@@ -1,7 +1,7 @@
 package com.example.IPRWC.Backend.security;
 
 import com.example.IPRWC.Backend.entities.User;
-import com.example.IPRWC.Backend.repository.UserRepo;
+import com.example.IPRWC.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,17 +16,14 @@ import java.util.Optional;
 public class MyUserDetailService implements UserDetailsService {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Optional<User> userRes = userRepo.findByEmail(email);
+        Optional<User> userRes = userRepository.findByEmail(email);
         if (userRes.isEmpty())
             throw new UsernameNotFoundException("Could not find User with email " + email);
         User user = userRes.get();
-        return new org.springframework.security.core.userdetails.User(
-                email,
-                user.getPassword(),
-                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER")));
+        return UserDetailsImpl.build(user);
     }
 }

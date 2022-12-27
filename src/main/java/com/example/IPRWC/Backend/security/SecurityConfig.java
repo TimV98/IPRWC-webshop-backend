@@ -1,6 +1,7 @@
 package com.example.IPRWC.Backend.security;
 
-import com.example.IPRWC.Backend.repository.UserRepo;
+import com.example.IPRWC.Backend.models.ERole;
+import com.example.IPRWC.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SecurityConfig {
 
     @Autowired
-    private UserRepo userRepo;
+    private UserRepository userRepository;
     @Autowired
     private JWTFilter filter;
     @Autowired
@@ -40,8 +41,11 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/user/**").hasRole("ROLE_USER")
+                .antMatchers("/api/admin/**").hasRole("ROLE_ADMIN")
+                .antMatchers("/api/products/add").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/products/edit/**").hasAuthority("ROLE_ADMIN")
+                .antMatchers("/api/products/delete/**").hasAuthority("ROLE_ADMIN")
                 .and()
                 .userDetailsService(userDetailService)
                 .exceptionHandling()
