@@ -19,7 +19,7 @@ public class Product {
 
     @Id
     @SequenceGenerator(name="pk_sequence",sequenceName="messagesounds_id_seq", allocationSize=1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
     public int price;
     public String description;

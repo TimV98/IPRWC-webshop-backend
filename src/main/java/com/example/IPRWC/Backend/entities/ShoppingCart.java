@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,14 +17,15 @@ import javax.persistence.*;
 public class ShoppingCart {
     @Id
     @SequenceGenerator(name = "pk_sequence", sequenceName = "messagesounds_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
 
     public int quantity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     Product product;
 
-
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    User user;
 }

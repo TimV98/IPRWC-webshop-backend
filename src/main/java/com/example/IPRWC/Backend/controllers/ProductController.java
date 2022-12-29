@@ -16,12 +16,16 @@ public class ProductController {
     @Autowired
     ProductRepository productRepository;
 
-    @GetMapping("/get")
+    @GetMapping("/getAll")
     public List<Product> getAllProducts() {
-        return (List<Product>) productRepository.findAll();
+        return productRepository.findAll();
     }
 
-//    @Secured("ROLE_ADMIN")
+    @GetMapping("/get/{id}")
+    public Optional<Product> getProduct(@PathVariable Long id) {
+        return productRepository.findById(id);
+    }
+
     @PostMapping("/add")
     public Product saveProduct(@RequestBody Product product) {
         return productRepository.save(product);
@@ -41,8 +45,6 @@ public class ProductController {
         } else {
             return null;
         }
-
-
     }
 
     @DeleteMapping("/delete/{id}")
