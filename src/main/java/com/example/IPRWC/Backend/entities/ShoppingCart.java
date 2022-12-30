@@ -25,7 +25,7 @@ public class ShoppingCart {
     @JoinColumn(name = "shopping_cart_id", referencedColumnName = "id")
     List<ShoppingCartItem> products;
 
-    @OneToOne(cascade = CascadeType.MERGE)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     User user;
 }

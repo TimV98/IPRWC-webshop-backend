@@ -1,13 +1,16 @@
 package com.example.IPRWC.Backend.controllers;
 
 import com.example.IPRWC.Backend.entities.ShoppingCart;
+import com.example.IPRWC.Backend.entities.ShoppingCartItem;
 import com.example.IPRWC.Backend.entities.User;
+import com.example.IPRWC.Backend.repository.ShoppingCartItemRepository;
 import com.example.IPRWC.Backend.repository.ShoppingCartRepository;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -20,16 +23,19 @@ public class ShoppingCartController {
     @Autowired
     UserRepository userRepository;
 
-//    @Autowired
-//    ShoppingCartItemRepository shoppingCartItemRepository;
+    @Autowired
+    ShoppingCartItemRepository shoppingCartItemRepository;
 
+    @GetMapping("/get/{id}")
+    public Optional<ShoppingCart> getCartById(@PathVariable Long id) {
+        return shoppingCartRepository.findById(id);
+
+    }
 
     @GetMapping("/get")
     public Optional<ShoppingCart> getCartByUser(Authentication authentication) {
         Optional<User> userData = userRepository.findByEmail(authentication.getName());
         String email = userData.get().getEmail();
-        System.out.println("email: "+ email);
-
         return shoppingCartRepository.findByUserEmail(email);
 
     }
@@ -43,10 +49,10 @@ public class ShoppingCartController {
 
     @PutMapping("/edit/{id}")
     public ShoppingCart editQuantity(@RequestBody ShoppingCart shoppingCart, @PathVariable Long id) {
-        Optional<ShoppingCart>shoppingCartData = shoppingCartRepository.findById(id);
-        if(shoppingCartData.isPresent()) {
+        Optional<ShoppingCart> shoppingCartData = shoppingCartRepository.findById(id);
+        if (shoppingCartData.isPresent()) {
             ShoppingCart _shoppingCart = shoppingCartData.get();
-            for (int i = 0; i < _shoppingCart.getProducts().size(); i++){
+            for (int i = 0; i < _shoppingCart.getProducts().size(); i++) {
                 _shoppingCart.getProducts().get(i).setQuantity(shoppingCart.getProducts().get(i).getQuantity());
             }
             return shoppingCartRepository.save(_shoppingCart);
@@ -55,7 +61,20 @@ public class ShoppingCartController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public void deleteShoppinCartItem(@PathVariable Long id) {
+    public void deleteShoppingCart(@PathVariable Long id) {
+        setUsertoNull(id);
         shoppingCartRepository.deleteById(id);
+    }
+
+    public ShoppingCart setUsertoNull(Long id) {
+        Optional<ShoppingCart> _shoppingcart = shoppingCartRepository.findById(id);
+        ShoppingCart shoppingCart = _shoppingcart.get();
+        shoppingCart.setUser(null);
+        return shoppingCartRepository.save(shoppingCart);
+    }
+
+    @DeleteMapping("/delete/item/{id}")
+    public void deleteShoppingCartItem(@PathVariable Long id) {
+        shoppingCartItemRepository.deleteById(id);
     }
 }
