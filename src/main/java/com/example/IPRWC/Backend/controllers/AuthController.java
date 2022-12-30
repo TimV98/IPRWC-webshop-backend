@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    //TODO rewrite this.
     @Autowired
     private UserRepository userRepository;
 

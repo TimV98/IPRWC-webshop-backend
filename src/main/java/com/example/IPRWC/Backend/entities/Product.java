@@ -14,7 +14,6 @@ import javax.persistence.*;
 @Setter
 @ToString
 @NoArgsConstructor
-//@Table(name = "products")
 public class Product {
 
     @Id

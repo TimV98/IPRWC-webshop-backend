@@ -11,6 +11,18 @@ public class SignupRequest {
 
     private String email;
 
+    private String firstName;
+
+    private String prefix;
+
+    private String lastName;
+
+    private Integer phoneNumber;
+
+    private String address;
+
+    private String zipCode;
+
     private Set<String> role;
 
     private String password;

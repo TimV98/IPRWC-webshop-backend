@@ -1,31 +1,27 @@
 package com.example.IPRWC.Backend.entities;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 @Entity
-public class ShoppingCart {
+public class ShoppingCartItem {
+
     @Id
     @SequenceGenerator(name = "pk_sequence", sequenceName = "messagesounds_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ShoppingCartItem.class)
-    @JoinColumn(name = "shopping_cart_id", referencedColumnName = "id")
-    List<ShoppingCartItem> products;
+    public int price;
 
-    @OneToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    User user;
+    public String product_name;
+
+    public int quantity;
 }
