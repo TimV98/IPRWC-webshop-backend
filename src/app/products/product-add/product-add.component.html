@@ -1,0 +1,42 @@
+<h1>Product toevoegen</h1>
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-10 col-md-8 col-sm-offset-1 col-md-offset-2">
+      <form #productForm="ngForm" (ngSubmit)="submitProduct(productForm)" class="col-md-6">
+
+        <div class="form-group">
+          <label for="name">Productnaam:</label>
+          <input type="text" id="name" name="name" class="pull right" required [(ngModel)]="product.name">
+        </div>
+        <div class="form-group">
+          <label for="size">Maat:</label>
+          <input type="text" id="size" name="date" class="pull right" required [(ngModel)]="product.size">
+        </div>
+        <div class="form-group">
+          <label for="brand">Merk:</label>
+          <input type="text" id="brand" name="deliveryDate" class="pull right" required
+                 [(ngModel)]="product.brand">
+        </div>
+        <div class="form-group">
+          <label for="price"> Prijs:</label>
+          <input type="text" id="price" name="price" class="pull right" required [(ngModel)]="product.price">
+        </div>
+        <div class="form-group">
+          <label for="vat"> Plaatje:</label>
+          <input type="file" min="0" max="21" id="vat" name="vat" size="3" class="pull right" required
+                 [(ngModel)]="product.imageURL">
+        </div>
+        <div class="form-group">
+          <label for="description">Beschrijving:</label>
+          <input type="date" id="description" name="description" class="pull right" required [(ngModel)]="product.description">
+        </div>
+        <div *ngIf="product.productID !== null ">
+          <div class="button-list">
+            <button class="btn btn-success" [disabled]="!productForm.valid">Opslaan</button>
+            <button class="btn btn-danger" (click)="toContacts()"> Cancel</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
