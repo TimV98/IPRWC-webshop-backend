@@ -1,0 +1,7 @@
+<div class="col-md-4">
+  <p *ngIf="cartProducts.length == 0">U heeft nog geen producten toegevoegd aan uw winkelmandje</p>
+  <hr>
+  <div *ngFor="let product of cartProducts" >
+    <app-shopping-cart-item [cartProduct]="product"></app-shopping-cart-item>
+  </div>
+</div>
