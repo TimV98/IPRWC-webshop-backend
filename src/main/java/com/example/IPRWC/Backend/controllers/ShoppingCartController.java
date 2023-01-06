@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -43,9 +42,25 @@ public class ShoppingCartController {
     @PostMapping("/add")
     public ShoppingCart addShoppingCart(@RequestBody ShoppingCart shoppingCart, Authentication authentication) {
         Optional<User> user = userRepository.findByEmail(authentication.getName());
+        Optional<ShoppingCart> _shoppingCart = shoppingCartRepository.findByUserEmail(authentication.getName());
+        if (user.isEmpty()) {
+            shoppingCart.setUser(null);
+            return shoppingCartRepository.save(shoppingCart);
+        }
+        if (_shoppingCart.isPresent()) {
+            ShoppingCart shoppingCartData = _shoppingCart.get();
+            shoppingCartData.setProducts(shoppingCart.getProducts());
+            return shoppingCartRepository.save(shoppingCartData);
+        }
         shoppingCart.setUser(user.get());
         return shoppingCartRepository.save(shoppingCart);
     }
+
+    @GetMapping("/getItem/{id}")
+    public Optional<ShoppingCartItem> getCartByUserw(@PathVariable Long id) {
+        return shoppingCartItemRepository.findById(id);
+    }
+
 
     @PutMapping("/edit/{id}")
     public ShoppingCart editQuantity(@RequestBody ShoppingCart shoppingCart, @PathVariable Long id) {
@@ -62,15 +77,11 @@ public class ShoppingCartController {
 
     @DeleteMapping("/delete/{id}")
     public void deleteShoppingCart(@PathVariable Long id) {
-        setUsertoNull(id);
-        shoppingCartRepository.deleteById(id);
-    }
-
-    public ShoppingCart setUsertoNull(Long id) {
         Optional<ShoppingCart> _shoppingcart = shoppingCartRepository.findById(id);
         ShoppingCart shoppingCart = _shoppingcart.get();
         shoppingCart.setUser(null);
-        return shoppingCartRepository.save(shoppingCart);
+        shoppingCartRepository.save(shoppingCart);
+        shoppingCartRepository.deleteById(id);
     }
 
     @DeleteMapping("/delete/item/{id}")
