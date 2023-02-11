@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
@@ -22,8 +21,9 @@ public class Product {
     public long id;
     public int price;
     public String description;
-    public String product_size;
-    public String image_url;
+    public String product_rating;
+    @OneToOne
+    public Image image;
     public String product_name;
 
 }

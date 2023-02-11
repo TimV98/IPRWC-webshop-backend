@@ -19,6 +19,10 @@ public class SignupRequest {
 
     private Integer phoneNumber;
 
+    private Integer houseNumber;
+
+    private String place;
+
     private String address;
 
     private String zipCode;

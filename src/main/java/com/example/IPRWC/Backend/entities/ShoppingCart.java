@@ -21,7 +21,7 @@ public class ShoppingCart {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = ShoppingCartItem.class)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER, targetEntity = ShoppingCartItem.class)
     @JoinColumn(name = "shopping_cart_id", referencedColumnName = "id")
     List<ShoppingCartItem> products;
 
