@@ -50,7 +50,7 @@ public class AuthController {
         }
         User user = new User(signupRequest.getEmail(),
                 passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getFirstName(), signupRequest.getPrefix(),
-                signupRequest.getLastName(), signupRequest.getAddress(), signupRequest.getZipCode(), signupRequest.getHouseNumber(),
+                signupRequest.getLastName(), signupRequest.getStreet(), signupRequest.getZipCode(), signupRequest.getHouseNumber(),
                 signupRequest.getPhoneNumber(),signupRequest.getPlace());
 
         Set<String> strRoles = signupRequest.getRole();

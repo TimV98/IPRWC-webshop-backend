@@ -23,7 +23,7 @@ public class SignupRequest {
 
     private String place;
 
-    private String address;
+    private String street;
 
     private String zipCode;
 
