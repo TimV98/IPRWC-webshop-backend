@@ -4,18 +4,15 @@ import com.example.IPRWC.Backend.entities.User;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:8081")
-
 @RestController
-@RequestMapping("api/users")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
+@RequestMapping("api/user")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
@@ -25,7 +22,18 @@ public class UserController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email).get();
     }
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN', 'ROLE_USER')")
+
+
+    @GetMapping("/all")
+    public List<User> getAllUsers(){
+        return userRepository.findAll();
+    }
+
+    @GetMapping("/get/{id}")
+    public Optional<User> getUser(@PathVariable Long id){
+        return userRepository.findById(id);
+    }
+
     @PutMapping("/edit")
     public User editUserDetails(@RequestBody User user) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -35,9 +43,32 @@ public class UserController {
             _user.setFirstName(user.getFirstName());
             _user.setPrefix(user.getPrefix());
             _user.setLastName(user.getLastName());
-            _user.setAddress(user.getAddress());
+            _user.setStreet(user.getStreet());
             _user.setZipCode(user.getZipCode());
             _user.setHouseNumber(user.getHouseNumber());
+            _user.setPhoneNumber(user.getPhoneNumber());
+            _user.setPlace(user.getPlace());
+
+            return userRepository.save(_user);
+        }
+        return null;
+    }
+
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PutMapping("edit/{id}")
+    public User editUserDetails(@PathVariable Long id,@RequestBody User user) {
+        Optional<User> userData = userRepository.findById(id);
+        if (userData.isPresent()) {
+            System.out.println("Hij werkt!");
+            User _user = userData.get();
+            _user.setFirstName(user.getFirstName());
+            _user.setPrefix(user.getPrefix());
+            _user.setLastName(user.getLastName());
+            _user.setStreet(user.getStreet());
+            _user.setZipCode(user.getZipCode());
+            _user.setHouseNumber(user.getHouseNumber());
+            _user.setPhoneNumber(user.getPhoneNumber());
+            _user.setPlace(user.getPlace());
 
             return userRepository.save(_user);
         }

@@ -12,6 +12,7 @@ import java.util.Set;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 public class User {
 
@@ -20,13 +21,15 @@ public class User {
     private Long id;
 
     private String email;
-    private int phoneNumber;
+    private long phoneNumber;
     private String firstName;
     private String prefix;
     private String lastName;
-    private String address;
+    private String street;
     private String zipCode;
     private int houseNumber;
+
+    private String place;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
@@ -43,4 +46,17 @@ public class User {
 
     }
 
+    public User(String email,String password,  String firstName, String prefix, String lastName, String address,
+                String zipCode, int houseNumber, int phoneNumber, String place) {
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.firstName = firstName;
+        this.prefix = prefix;
+        this.lastName = lastName;
+        this.street = address;
+        this.zipCode = zipCode;
+        this.houseNumber = houseNumber;
+        this.password = password;
+        this.place = place;
+    }
 }

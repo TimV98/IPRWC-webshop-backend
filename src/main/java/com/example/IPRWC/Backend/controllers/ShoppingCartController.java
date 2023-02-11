@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("/api/cart")
 public class ShoppingCartController {
 
@@ -49,6 +49,7 @@ public class ShoppingCartController {
         }
         if (_shoppingCart.isPresent()) {
             ShoppingCart shoppingCartData = _shoppingCart.get();
+            shoppingCartData.getProducts();
             shoppingCartData.setProducts(shoppingCart.getProducts());
             return shoppingCartRepository.save(shoppingCartData);
         }
