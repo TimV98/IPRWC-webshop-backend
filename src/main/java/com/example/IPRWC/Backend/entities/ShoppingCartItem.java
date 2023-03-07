@@ -23,5 +23,7 @@ public class ShoppingCartItem {
 
     public String product_name;
 
+    public int total;
+
     public int quantity;
 }

@@ -11,6 +11,7 @@ import com.example.IPRWC.Backend.repository.RoleRepository;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import com.example.IPRWC.Backend.security.JwtUtil;
 import com.example.IPRWC.Backend.security.UserDetailsImpl;
+import com.example.IPRWC.Backend.services.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,69 +31,15 @@ import java.util.Set;
 @RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private AuthenticationManager authManager;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerHandler(@RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already taken!"));
-        }
-        User user = new User(signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getFirstName(), signupRequest.getPrefix(),
-                signupRequest.getLastName(), signupRequest.getStreet(), signupRequest.getZipCode(), signupRequest.getHouseNumber(),
-                signupRequest.getPhoneNumber(),signupRequest.getPlace());
-
-        Set<String> strRoles = signupRequest.getRole();
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-            roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                if ("admin".equals(role)) {
-                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
-                } else {
-                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userRole);
-                }
-            });
-        }
-
-        user.setRoles(roles);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return authService.register(signupRequest);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> loginHandler(@RequestBody LoginRequest loginRequest) {
-        Authentication authentication = authManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtil.generateJwtToken(authentication);
-
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-
-        return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getEmail(),
-                roles));
+        return authService.Login(loginRequest);
     }
 }

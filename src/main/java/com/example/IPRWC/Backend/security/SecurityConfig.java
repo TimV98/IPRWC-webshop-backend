@@ -44,6 +44,7 @@ public class SecurityConfig {
                 .antMatchers("/api/user/info").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                 .antMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/api/cart").permitAll()
+                .antMatchers("/api/orders/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                 .antMatchers("/api/products/add").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/api/products/edit/**").hasAuthority("ROLE_ADMIN")
                 .antMatchers("/api/products/delete/**").hasAuthority("ROLE_ADMIN")
