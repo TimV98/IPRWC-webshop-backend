@@ -22,8 +22,6 @@ public class Product {
     public int price;
     public String description;
     public String product_rating;
-    @OneToOne
-    public Image image;
     public String product_name;
 
 }

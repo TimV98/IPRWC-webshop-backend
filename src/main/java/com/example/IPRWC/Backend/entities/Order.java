@@ -23,7 +23,7 @@ public class Order {
 
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinColumn(name = "order_id", referencedColumnName = "id")
-    List<ShoppingCartItem> products;
+    List<OrderItem> products;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "user_id", referencedColumnName = "id")

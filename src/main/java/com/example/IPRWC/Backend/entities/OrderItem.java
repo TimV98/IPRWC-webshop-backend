@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 @Entity
-public class ShoppingCartItem {
+public class OrderItem {
 
     @Id
     @SequenceGenerator(name = "pk_sequence", sequenceName = "messagesounds_id_seq", allocationSize = 1)
