@@ -10,7 +10,6 @@ import com.example.IPRWC.Backend.payload.response.MessageResponse;
 import com.example.IPRWC.Backend.repository.RoleRepository;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import com.example.IPRWC.Backend.security.JwtUtil;
-import com.example.IPRWC.Backend.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -40,19 +39,18 @@ public class AuthService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    public ResponseEntity<?> Login(LoginRequest loginRequest) {
+    public ResponseEntity<?> login(LoginRequest loginRequest) {
         Authentication authentication = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtil.generateJwtToken(authentication);
 
-        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        User userDetails = (User) authentication.getPrincipal();
+//        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
         return ResponseEntity.ok(new JwtResponse(jwt,
-                userDetails.getEmail(),
-                roles));
+                userDetails.getEmail()));
     }
 
     public ResponseEntity<?> register(SignupRequest signupRequest) {
@@ -61,10 +59,18 @@ public class AuthService {
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already taken!"));
         }
-        User user = new User(signupRequest.getEmail(),
-                passwordEncoder.encode(signupRequest.getPassword()), signupRequest.getFirstName(), signupRequest.getPrefix(),
-                signupRequest.getLastName(), signupRequest.getStreet(), signupRequest.getZipCode(), signupRequest.getHouseNumber(),
-                signupRequest.getPhoneNumber(), signupRequest.getPlace());
+        User user = User.builder()
+                .firstName(signupRequest.getFirstName())
+                .prefix(signupRequest.getPrefix())
+                .lastName(signupRequest.getLastName())
+                .phoneNumber(signupRequest.getPhoneNumber())
+                .email(signupRequest.getEmail())
+                .password(signupRequest.getPassword())
+                .place(signupRequest.getPlace())
+                .zipCode(signupRequest.getZipCode())
+                .street(signupRequest.getStreet())
+                .houseNumber(signupRequest.getHouseNumber())
+                .build();
 
         Set<String> strRoles = signupRequest.getRole();
         Set<Role> roles = new HashSet<>();

@@ -1,15 +1,13 @@
 package com.example.IPRWC.Backend.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
 @Entity
 public class OrderItem {
@@ -26,4 +24,5 @@ public class OrderItem {
     public int total;
 
     public int quantity;
+
 }

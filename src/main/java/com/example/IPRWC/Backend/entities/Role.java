@@ -1,12 +1,11 @@
 package com.example.IPRWC.Backend.entities;
 
 import com.example.IPRWC.Backend.models.ERole;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.*;
 
 @Entity
 @Getter

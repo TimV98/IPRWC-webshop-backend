@@ -1,11 +1,10 @@
 package com.example.IPRWC.Backend.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-import javax.persistence.*;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 
 
 @Entity
@@ -13,16 +12,27 @@ import javax.persistence.*;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@With
 public class Product {
 
     @Id
     @SequenceGenerator(name="pk_sequence",sequenceName="messagesounds_id_seq", allocationSize=1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
+    @NotNull
     public int price;
     public String description;
-    public String product_rating;
+    @NotNull
+    public String genre;
+    @NotNull
+    @Max(value= 18, message = "Max age restriction can't be higher than 18")
+    public int age_rating;
+    @NotNull
     public String product_name;
+    @OneToOne
+    public Photo image;
 
 }
 

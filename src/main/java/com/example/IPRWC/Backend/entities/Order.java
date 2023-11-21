@@ -1,17 +1,16 @@
 package com.example.IPRWC.Backend.entities;
 
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
-import javax.persistence.*;
 import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @ToString
 @Entity
 @Table(name = "customer_order")

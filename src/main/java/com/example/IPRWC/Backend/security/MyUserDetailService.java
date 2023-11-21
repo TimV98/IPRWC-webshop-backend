@@ -24,6 +24,7 @@ public class MyUserDetailService implements UserDetailsService {
         if (userRes.isEmpty())
             throw new UsernameNotFoundException("Could not find User with email " + email);
         User user = userRes.get();
-        return UserDetailsImpl.build(user);
+        return User.builder().id(user.getId()).email(user.getEmail()).password(user.getPassword()).roles(user.getRoles()).build();
     }
+
 }

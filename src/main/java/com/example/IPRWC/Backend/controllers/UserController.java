@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RequestMapping("api/user")
 public class UserController {
     @Autowired
@@ -24,7 +23,6 @@ public class UserController {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findByEmail(email).get();
     }
-
 
     @GetMapping("/all")
     public List<User> getAllUsers() {

@@ -3,11 +3,15 @@ package com.example.IPRWC.Backend.controllers;
 import com.example.IPRWC.Backend.entities.Product;
 import com.example.IPRWC.Backend.payload.response.MessageResponse;
 import com.example.IPRWC.Backend.repository.ProductRepository;
+import com.example.IPRWC.Backend.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RestController
@@ -18,47 +22,34 @@ public class ProductController {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    ProductService productService;
+
     @GetMapping("/getAll")
     public ResponseEntity<?> getAllProducts() {
-        if (!productRepository.findAll().isEmpty())
-            return new ResponseEntity<>(productRepository.findAll(), HttpStatus.OK);
-        return new ResponseEntity<>("Products not found", HttpStatus.NOT_FOUND);
+        return this.productService.getAllProducts();
     }
 
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getProduct(@PathVariable Long id) {
-        if (productRepository.findById(id).isPresent()) {
-            return new ResponseEntity<>(productRepository.findById(id), HttpStatus.OK);
-        }
-        return new ResponseEntity<>("Product with given id not found", HttpStatus.NOT_FOUND);
+        return this.productService.getProduct(id);
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> saveProduct(@RequestBody Product product) {
-        productRepository.save(product);
-        return ResponseEntity.ok(new MessageResponse("Product added!"));
+    public ResponseEntity<?> saveProduct(@Valid @RequestPart("product") Product product, @RequestPart("image") MultipartFile image) throws IOException {
+        return this.productService.saveProduct(product, image);
     }
 
     @PutMapping("/edit/{id}")
     public ResponseEntity<?> putProduct(@RequestBody Product product, @PathVariable Long id) {
-        Optional<Product> productData = productRepository.findById(id);
-        if (productData.isPresent()) {
-            Product _product = productData.get();
-            _product.setPrice(product.getPrice());
-            _product.setProduct_rating(product.getProduct_rating());
-            _product.setDescription(product.getDescription());
-            _product.setProduct_name(product.getProduct_name());
-            productRepository.save(_product);
-            return ResponseEntity.ok(new MessageResponse("Product with id: " + _product.getId() + " has been edited"));
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse("Product not edited"));
-        }
+        this.productService.editProduct(id, product);
+        return ResponseEntity.ok(new MessageResponse("Product with id: " + product.getId() + " has been edited"));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         if (productRepository.findById(id).isPresent()) {
-            productRepository.deleteById(id);
+            this.productService.deleteProduct(id);
             return ResponseEntity.ok().body(new MessageResponse("Product deleted"));
         }
         return ResponseEntity.unprocessableEntity().body("Product doesn't exist!");
