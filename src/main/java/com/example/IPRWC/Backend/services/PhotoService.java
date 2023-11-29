@@ -22,18 +22,6 @@ public class PhotoService {
     @Autowired
     private PhotosRepository photosRepository;
 
-//    public ResponseEntity<?> store(MultipartFile file) throws IOException {
-//        if (file == null) {
-//            return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File wasn't added", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
-//        }
-//        photosRepository.save(Photo.builder()
-//                .name(file.getOriginalFilename())
-//                .type(file.getContentType())
-//                .data(ImageUtils.compressImage(file.getBytes())).build());
-//
-//        return new ResponseEntity<>(new MessageResponse("File successfully added: " + file.getOriginalFilename()), HttpStatus.OK);
-//    }
-
     public ResponseEntity<?> getFile(String fileName) {
         if (photosRepository.findByName(fileName).isPresent()) {
             Photo dbPhoto = photosRepository.findByName(fileName).get();

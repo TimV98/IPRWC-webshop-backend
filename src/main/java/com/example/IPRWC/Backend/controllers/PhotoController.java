@@ -23,9 +23,4 @@ public class PhotoController {
         return photoService.getFile(fileName);
     }
 
-//    @CrossOrigin(origins = "http://localhost:4200/", allowCredentials = "true")
-//    @PostMapping("/upload")
-//    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-//        return photoService.store(file);
-//    }
 }
