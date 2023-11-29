@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@With
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -33,16 +34,22 @@ public class User implements UserDetails {
     @NotNull(message = "Email can't be null")
     @NotBlank(message = "Email can't be empty")
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
     private long phoneNumber;
 
     @NotNull(message = "First name can't be null")
     @NotBlank(message = "First name can't be empty")
     private String firstName;
+
     private String prefix;
 
     @NotNull(message = "Last name can't be null")
     @NotBlank(message = "Last name can't be empty")
     private String lastName;
+
     @NotNull(message = "Street can't be null")
     @NotBlank(message = "Street can't be empty")
     private String street;
@@ -54,12 +61,13 @@ public class User implements UserDetails {
     @NotNull(message = "Place can't be null")
     @NotBlank(message = "Place can't be empty")
     private int houseNumber;
+
     @NotNull(message = "Place can't be null")
     @NotBlank(message = "Place can't be empty")
     private String place;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password;
+    @OneToMany
+    private List<Order> orders;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",

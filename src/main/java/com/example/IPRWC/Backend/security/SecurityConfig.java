@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 
 public class SecurityConfig {
-
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private JWTFilter filter;
     @Autowired
@@ -29,18 +27,21 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/login", "/register").permitAll()
-                .requestMatchers("/api/user/info").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/user/info").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/user/edit/me").hasRole("USER")
+                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN")
                 .requestMatchers("/api/cart").permitAll()
-                .requestMatchers("/api/orders/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                .requestMatchers("/api/products/add").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/products/edit/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/products/delete/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/products/getAll").permitAll()
+                .requestMatchers("/api/products/add").hasRole("ADMIN")
+                .requestMatchers("/api/products/edit/**").hasRole("ADMIN")
+                .requestMatchers("/api/products/delete/**").hasRole("ADMIN")
                 .requestMatchers("/api/photos/**").permitAll()
-                .and()
+                .and().cors().and()
                 .userDetailsService(userDetailService)
-                .exceptionHandling()
+                .exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) ->
+                        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Insufficient authorization"))
                 .authenticationEntryPoint(
                         (request, response, authException) ->
                                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized")

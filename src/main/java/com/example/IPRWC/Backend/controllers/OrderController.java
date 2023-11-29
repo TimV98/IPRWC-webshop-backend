@@ -18,6 +18,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
+@CrossOrigin(origins = {"http://localhost:4200"}, allowCredentials = "true")
 public class OrderController {
 
     @Autowired
@@ -36,23 +37,13 @@ public class OrderController {
         return this.orderService.getOrderbyId(id);
     }
 
-    @GetMapping("/get")
-    public Optional<?> getOrderByUser(Authentication authentication) {
-        Optional<User> userData = userRepository.findByEmail(authentication.getName());
-        String email = userData.get().getEmail();
-        return orderRepository.findByUserEmail(email);
-    }
-
     @GetMapping("/getAll")
-    public List<Order> getOrdersByUser(Authentication authentication) {
-        Optional<User> userData = userRepository.findByEmail(authentication.getName());
-        String email = userData.get().getEmail();
-        return orderRepository.findAllByUserEmail(email);
+    public ResponseEntity<?> getOrdersByUser(Authentication authentication) {
+        return orderService.getAllOrdersFromUser(authentication);
     }
 
     @PostMapping("/add")
     public ResponseEntity<?> addOrder(@RequestBody Order order, Authentication authentication) {
-
         return orderService.addOrder(order, authentication);
     }
 

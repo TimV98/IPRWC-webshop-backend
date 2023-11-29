@@ -47,7 +47,6 @@ public class AuthService {
         String jwt = jwtUtil.generateJwtToken(authentication);
 
         User userDetails = (User) authentication.getPrincipal();
-//        List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getEmail()));
@@ -65,14 +64,14 @@ public class AuthService {
                 .lastName(signupRequest.getLastName())
                 .phoneNumber(signupRequest.getPhoneNumber())
                 .email(signupRequest.getEmail())
-                .password(signupRequest.getPassword())
+                .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .place(signupRequest.getPlace())
                 .zipCode(signupRequest.getZipCode())
                 .street(signupRequest.getStreet())
                 .houseNumber(signupRequest.getHouseNumber())
                 .build();
 
-        Set<String> strRoles = signupRequest.getRole();
+        Set<String> strRoles = signupRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
         if (strRoles == null) {

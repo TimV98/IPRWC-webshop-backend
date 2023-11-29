@@ -9,21 +9,23 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/api/photos")
+
 public class PhotoController {
 
     @Autowired
     private PhotoService photoService;
 
+    @CrossOrigin(origins = "http://localhost:4200/", allowCredentials = "true")
     @GetMapping("/{fileName}")
     public ResponseEntity<?> getImage(@PathVariable String fileName) {
         return photoService.getFile(fileName);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
-        return photoService.store(file);
-    }
+//    @CrossOrigin(origins = "http://localhost:4200/", allowCredentials = "true")
+//    @PostMapping("/upload")
+//    public ResponseEntity<?> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+//        return photoService.store(file);
+//    }
 }

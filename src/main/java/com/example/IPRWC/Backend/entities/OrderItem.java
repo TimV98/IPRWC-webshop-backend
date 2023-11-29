@@ -13,15 +13,13 @@ import lombok.*;
 public class OrderItem {
 
     @Id
-    @SequenceGenerator(name = "pk_sequence", sequenceName = "messagesounds_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "OI_sequence", sequenceName = "OI_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
 
     public int price;
 
     public String product_name;
-
-    public int total;
 
     public int quantity;
 

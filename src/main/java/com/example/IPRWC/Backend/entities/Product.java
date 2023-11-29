@@ -18,7 +18,7 @@ import lombok.*;
 public class Product {
 
     @Id
-    @SequenceGenerator(name="pk_sequence",sequenceName="messagesounds_id_seq", allocationSize=1)
+    @SequenceGenerator(name = "product_sequence", sequenceName = "PRODUCT_SEQ", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public long id;
     @NotNull
@@ -27,11 +27,11 @@ public class Product {
     @NotNull
     public String genre;
     @NotNull
-    @Max(value= 18, message = "Max age restriction can't be higher than 18")
+    @Max(value = 18, message = "Max age restriction can't be higher than 18")
     public int age_rating;
     @NotNull
     public String product_name;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     public Photo image;
 
 }

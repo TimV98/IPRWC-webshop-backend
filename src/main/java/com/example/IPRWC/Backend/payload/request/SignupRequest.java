@@ -27,7 +27,7 @@ public class SignupRequest {
 
     private String zipCode;
 
-    private Set<String> role;
+    private Set<String> roles;
 
     private String password;
 }

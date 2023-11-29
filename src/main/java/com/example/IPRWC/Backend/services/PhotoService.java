@@ -7,6 +7,7 @@ import com.example.IPRWC.Backend.repository.PhotosRepository;
 import com.example.IPRWC.Backend.util.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -23,7 +24,7 @@ public class PhotoService {
 
     public ResponseEntity<?> store(MultipartFile file) throws IOException {
         if (file == null) {
-            return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST, "File wasn't added").getHttpStatus());
+            return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File wasn't added", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
         }
         photosRepository.save(Photo.builder()
                 .name(file.getOriginalFilename())
@@ -37,8 +38,15 @@ public class PhotoService {
         if (photosRepository.findByName(fileName).isPresent()) {
             Photo dbPhoto = photosRepository.findByName(fileName).get();
             byte[] image = ImageUtils.decompressImage(dbPhoto.getData());
-            return new ResponseEntity<>(image, HttpStatus.OK);
+            if (dbPhoto.getType().equals(MediaType.IMAGE_PNG_VALUE)) {
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_PNG).body(image);
+
+            } else if (dbPhoto.getType().equals(MediaType.IMAGE_JPEG_VALUE)) {
+                return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.IMAGE_JPEG).body(image);
+
+            }
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(new MessageResponse("Wrong Media Type"));
         }
-        return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND, "File with name " + fileName + "not found"), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "File with name " + fileName + "not found", HttpStatus.NOT_FOUND.name()), HttpStatus.NOT_FOUND);
     }
 }

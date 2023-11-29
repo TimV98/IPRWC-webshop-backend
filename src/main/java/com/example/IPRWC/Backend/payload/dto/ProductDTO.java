@@ -1,4 +1,4 @@
-package com.example.IPRWC.Backend.models.dto;
+package com.example.IPRWC.Backend.payload.dto;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotEmpty;

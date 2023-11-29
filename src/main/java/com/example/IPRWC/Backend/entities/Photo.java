@@ -2,7 +2,6 @@ package com.example.IPRWC.Backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Getter
@@ -10,13 +9,14 @@ import org.hibernate.annotations.GenericGenerator;
 @AllArgsConstructor
 @Builder
 @ToString
+@With
 @NoArgsConstructor
 @SequenceGenerator(name = "photoSeq", sequenceName = "PHOTO_SEQUENCE")
 
 public class Photo {
     @Id
-    @GeneratedValue(generator = "photoSeq")
-    private long id;
+    @GeneratedValue(generator = "photoSeq", strategy = GenerationType.SEQUENCE)
+    private int id;
 
     private String name;
 
@@ -25,5 +25,4 @@ public class Photo {
     @Lob
     @Column(name = "imagedata", length = 1000)
     private byte[] data;
-
 }
