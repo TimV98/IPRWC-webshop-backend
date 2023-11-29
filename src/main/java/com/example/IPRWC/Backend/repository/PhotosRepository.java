@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @Transactional
-public interface PhotosRepository extends JpaRepository<Photo, String> {
+public interface PhotosRepository extends JpaRepository<Photo, Long> {
 
      Optional<Photo> findByName(String fileName);
 }

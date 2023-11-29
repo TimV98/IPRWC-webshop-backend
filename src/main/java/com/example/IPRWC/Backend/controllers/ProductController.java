@@ -39,7 +39,7 @@ public class ProductController {
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> putProduct(@Valid @RequestPart("product") ProductDTO product, @RequestPart("image") MultipartFile image, @PathVariable Long id) {
+    public ResponseEntity<?> putProduct(@Valid @RequestPart("product") ProductDTO product, @RequestPart("image") MultipartFile image, @PathVariable Long id) throws IOException {
         return this.productService.editProduct(id, product, image);
 
     }

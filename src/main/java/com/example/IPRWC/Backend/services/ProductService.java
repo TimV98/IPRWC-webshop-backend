@@ -8,6 +8,8 @@ import com.example.IPRWC.Backend.payload.response.MessageResponse;
 import com.example.IPRWC.Backend.repository.ProductRepository;
 import com.example.IPRWC.Backend.util.ImageUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -27,6 +30,9 @@ public class ProductService {
     ProductRepository productRepository;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final List<String> contentTypes = Arrays.asList("image/png", "image/jpg", "image/jpeg");
+
 
     @Autowired
     PhotoService photoService;
@@ -66,7 +72,9 @@ public class ProductService {
     }
 
     public ResponseEntity<?> saveProduct(ProductDTO productDTO, MultipartFile image) throws IOException {
-
+        if (!contentTypes.contains(image.getContentType())) {
+            return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File is not an image", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
+        }
         Product product = objectMapper.convertValue(productDTO, Product.class);
         Photo photo = Photo.builder()
                 .name(image.getOriginalFilename())
@@ -79,24 +87,40 @@ public class ProductService {
         return new ResponseEntity<>(productWithImage, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> editProduct(Long id, ProductDTO product, MultipartFile image) {
+    public ResponseEntity<?> editProduct(Long id, ProductDTO productDTO, MultipartFile image) throws IOException {
         if (productRepository.findById(id).isPresent()) {
-            Product _product = productRepository.findById(id).get();
-            _product.setPrice(product.getPrice());
-            _product.setDescription(product.getDescription());
-            _product.setProduct_name(product.getProduct_name());
-            productRepository.save(_product);
+            Product product = objectMapper.convertValue(productDTO, Product.class);
+            if (!image.getContentType().equals(MediaType.IMAGE_JPEG_VALUE) || !image.getContentType().equals(MediaType.IMAGE_PNG_VALUE)) {
+                new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File is not an image", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
+            }
+            long photoId = productRepository.findById(id).get().image.getId();
+            Photo dbPhoto = photoService.getFileInformation(photoId)
+                    .withName(image.getOriginalFilename())
+                    .withType(image.getContentType())
+                    .withData(ImageUtils.compressImage(image.getBytes()));
+
+            Product dbProduct = productRepository.findById(id).get()
+                    .withProduct_name(product.getProduct_name())
+                    .withGenre(product.getGenre())
+                    .withPrice(product.getPrice())
+                    .withDescription(product.getDescription())
+                    .withAge_rating(product.getAge_rating())
+                    .withImage(dbPhoto);
+
+            productRepository.save(dbProduct);
+            return ResponseEntity.ok("Product with id: " + id + " edited");
         }
+        return new ResponseEntity<>(new ErrorResponse(HttpStatus.NOT_FOUND.value(), "Product with id: " + id + " was not found", HttpStatus.NOT_FOUND.name()), HttpStatus.NOT_FOUND);
     }
 
     public ResponseEntity<?> deleteProduct(Long id) {
         if (productRepository.findById(id).isPresent()) {
             productRepository.deleteById(id);
-            return ResponseEntity.ok().body(new MessageResponse("Product with id: " + id + "deleted"));
+            return ResponseEntity.ok().body(new MessageResponse("Product with id: " + id + " deleted"));
         }
-        return new ResponseEntity(new ErrorResponse(
+        return new ResponseEntity<>(new ErrorResponse(
                 HttpStatus.UNPROCESSABLE_ENTITY.value(),
-                "Product with id: " + id + "doesn't exist!",
+                "Product with id: " + id + " doesn't exist!",
                 HttpStatus.UNPROCESSABLE_ENTITY.name()), HttpStatus.UNPROCESSABLE_ENTITY);
     }
 

@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/products/edit/**").hasRole("ADMIN")
                 .requestMatchers("/api/products/delete/**").hasRole("ADMIN")
                 .requestMatchers("/api/photos/**").permitAll()
+                .anyRequest().permitAll()
                 .and().cors().and()
                 .userDetailsService(userDetailService)
                 .exceptionHandling().accessDeniedHandler((request, response, accessDeniedException) ->
