@@ -1,6 +1,5 @@
 package com.example.IPRWC.Backend.controllers;
 
-import com.example.IPRWC.Backend.entities.User;
 import com.example.IPRWC.Backend.payload.dto.UserDTO;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import com.example.IPRWC.Backend.services.UserService;
@@ -8,10 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
 
 @RestController
 @RequestMapping("api/user")

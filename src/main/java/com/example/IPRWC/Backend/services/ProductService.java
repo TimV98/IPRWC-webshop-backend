@@ -31,7 +31,7 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
+    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private static final List<String> contentTypes = Arrays.asList("image/png", "image/jpg", "image/jpeg");
 
@@ -84,16 +84,23 @@ public class ProductService {
             return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File is not an image", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
         }
         ProductDTO productDTOObj = objectMapper.readValue(productDTO, ProductDTO.class);
-        Product product = objectMapper.convertValue(productDTOObj, Product.class);
+        Product extractedProduct = objectMapper.convertValue(productDTOObj, Product.class);
         Photo photo = Photo.builder()
                 .name(image.getOriginalFilename())
                 .type(image.getContentType())
                 .data(ImageUtils.compressImage(image.getBytes()))
                 .build();
-        Product productWithImage = product.withImage(photo);
 
-        this.productRepository.save(productWithImage);
-        return new ResponseEntity<>(productWithImage, HttpStatus.OK);
+        Product product = Product.builder().product_name(extractedProduct.getProduct_name())
+                .price(extractedProduct.getPrice())
+                .genre(extractedProduct.getGenre())
+                .age_rating(extractedProduct.getAge_rating())
+                .description(extractedProduct.getDescription())
+                .image(photo)
+                .build();
+
+        this.productRepository.save(product);
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     public ResponseEntity<?> editProduct(Long id, String productDTO, MultipartFile image) throws IOException {
