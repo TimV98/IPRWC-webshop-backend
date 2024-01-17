@@ -25,6 +25,6 @@ public class ProductDTO {
     @NotEmpty(message = "Genre can't be empty")
     public String genre;
 
-    public String image;
+    public PhotoDTO image;
 
 }

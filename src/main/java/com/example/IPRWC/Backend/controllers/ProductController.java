@@ -34,12 +34,12 @@ public class ProductController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<?> saveProduct(@Valid @RequestPart("product") ProductDTO product, @RequestPart("image") MultipartFile image) throws IOException {
+    public ResponseEntity<?> saveProduct(@Valid @RequestParam("product") String product, @RequestParam("image") MultipartFile image) throws IOException {
         return this.productService.saveProduct(product, image);
     }
 
     @PutMapping("/edit/{id}")
-    public ResponseEntity<?> putProduct(@Valid @RequestPart("product") ProductDTO product, @RequestPart("image") MultipartFile image, @PathVariable Long id) throws IOException {
+    public ResponseEntity<?> putProduct(@Valid @RequestParam("product") String product, @RequestParam("image") MultipartFile image, @PathVariable Long id) throws IOException {
         return this.productService.editProduct(id, product, image);
 
     }

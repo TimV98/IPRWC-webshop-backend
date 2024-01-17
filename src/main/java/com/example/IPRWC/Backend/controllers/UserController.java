@@ -46,7 +46,6 @@ public class UserController {
         return this.userService.editProfile(user);
     }
 
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("edit/{id}")
     public ResponseEntity<?> editUser(@PathVariable long id, @Valid @RequestBody UserDTO user) {
         return this.userService.adminEditUser(id, user);

@@ -3,6 +3,7 @@ package com.example.IPRWC.Backend.services;
 import com.example.IPRWC.Backend.entities.User;
 import com.example.IPRWC.Backend.payload.dto.UserDTO;
 import com.example.IPRWC.Backend.payload.response.ErrorResponse;
+import com.example.IPRWC.Backend.payload.response.MessageResponse;
 import com.example.IPRWC.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -96,7 +97,7 @@ public class UserService {
                         .withPhoneNumber(user.getPhoneNumber());
 
                 userRepository.save(userData);
-                return ResponseEntity.ok().body("Profile Edited");
+                return new ResponseEntity<>(new MessageResponse("Profile Edited!"), HttpStatus.OK);
             }
             return new ResponseEntity<>(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(),
                     "You're unauthorized to access this resource",

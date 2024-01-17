@@ -2,11 +2,13 @@ package com.example.IPRWC.Backend.services;
 
 import com.example.IPRWC.Backend.entities.Photo;
 import com.example.IPRWC.Backend.entities.Product;
+import com.example.IPRWC.Backend.payload.dto.PhotoDTO;
 import com.example.IPRWC.Backend.payload.dto.ProductDTO;
 import com.example.IPRWC.Backend.payload.response.ErrorResponse;
 import com.example.IPRWC.Backend.payload.response.MessageResponse;
 import com.example.IPRWC.Backend.repository.ProductRepository;
 import com.example.IPRWC.Backend.util.ImageUtils;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,false);
 
     private static final List<String> contentTypes = Arrays.asList("image/png", "image/jpg", "image/jpeg");
 
@@ -43,6 +45,7 @@ public class ProductService {
             List<Product> products = productRepository.findAll();
             List<ProductDTO> productDTOList = new ArrayList<>();
             for (Product product : products) {
+
                 ProductDTO convertedProduct = ProductDTO.builder()
                         .id(product.getId())
                         .product_name(product.getProduct_name())
@@ -50,7 +53,12 @@ public class ProductService {
                         .price(product.getPrice())
                         .genre(product.getGenre())
                         .description(product.getDescription())
-                        .image(apiUrl + "/api/photos/" + product.image.getName()).build();
+                        .image(PhotoDTO.builder()
+                                .name(product.image.getName())
+                                .type(product.image.getType())
+                                .image_url(apiUrl + "/api/photos/" + product.image.getName())
+                                .build()).build();
+
 
                 productDTOList.add(convertedProduct);
             }
@@ -71,11 +79,12 @@ public class ProductService {
         }
     }
 
-    public ResponseEntity<?> saveProduct(ProductDTO productDTO, MultipartFile image) throws IOException {
+    public ResponseEntity<?> saveProduct(String productDTO, MultipartFile image) throws IOException {
         if (!contentTypes.contains(image.getContentType())) {
             return new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File is not an image", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
         }
-        Product product = objectMapper.convertValue(productDTO, Product.class);
+        ProductDTO productDTOObj = objectMapper.readValue(productDTO, ProductDTO.class);
+        Product product = objectMapper.convertValue(productDTOObj, Product.class);
         Photo photo = Photo.builder()
                 .name(image.getOriginalFilename())
                 .type(image.getContentType())
@@ -87,9 +96,8 @@ public class ProductService {
         return new ResponseEntity<>(productWithImage, HttpStatus.OK);
     }
 
-    public ResponseEntity<?> editProduct(Long id, ProductDTO productDTO, MultipartFile image) throws IOException {
+    public ResponseEntity<?> editProduct(Long id, String productDTO, MultipartFile image) throws IOException {
         if (productRepository.findById(id).isPresent()) {
-            Product product = objectMapper.convertValue(productDTO, Product.class);
             if (!image.getContentType().equals(MediaType.IMAGE_JPEG_VALUE) || !image.getContentType().equals(MediaType.IMAGE_PNG_VALUE)) {
                 new ResponseEntity<>(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), "File is not an image", HttpStatus.BAD_REQUEST.name()), HttpStatus.BAD_REQUEST);
             }
@@ -98,6 +106,9 @@ public class ProductService {
                     .withName(image.getOriginalFilename())
                     .withType(image.getContentType())
                     .withData(ImageUtils.compressImage(image.getBytes()));
+
+            ProductDTO productDTOObj = objectMapper.readValue(productDTO, ProductDTO.class);
+            Product product = objectMapper.convertValue(productDTOObj, Product.class);
 
             Product dbProduct = productRepository.findById(id).get()
                     .withProduct_name(product.getProduct_name())
