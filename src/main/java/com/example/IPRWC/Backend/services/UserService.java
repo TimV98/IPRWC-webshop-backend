@@ -125,6 +125,8 @@ public class UserService {
                     .withHouseNumber(user.getHouseNumber())
                     .withPhoneNumber(user.getPhoneNumber());
 
+            userRepository.save(editedUser);
+
             return ResponseEntity.ok().body("User with id: " + id + " Edited");
 
         } else if (userRepository.findById(id).isEmpty()) {
