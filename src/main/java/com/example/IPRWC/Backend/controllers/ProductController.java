@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = {"http://localhost:4200", "http://93.119.4.217", "http://s1108697"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:4200", "http://93.119.4.217", "http://s1108697.nl"}, allowCredentials = "true")
 @RequestMapping("/api/products")
 public class ProductController {
 

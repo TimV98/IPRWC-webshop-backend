@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/user")
-@CrossOrigin(origins = {"http://localhost:4200", "http://93.119.4.217", "http://s1108697"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:4200", "http://93.119.4.217", "http://s1108697.nl"}, allowCredentials = "true")
 public class UserController {
     @Autowired
     private UserRepository userRepository;
